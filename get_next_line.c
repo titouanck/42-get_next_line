@@ -6,7 +6,7 @@
 /*   By: tchevrie <tchevrie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/29 14:57:26 by tchevrie          #+#    #+#             */
-/*   Updated: 2022/09/30 16:32:12 by tchevrie         ###   ########.fr       */
+/*   Updated: 2022/09/30 16:49:52 by tchevrie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ int	clear_element(char *content, t_list **elem)
 
 int	get_content(int fd, t_list *begin, t_list **current)
 {
-	while (read(fd, (*current)->content, BUFFER_SIZE))
+	while (read(fd, (*current)->content, BUFFER_SIZE) > 0)
 	{
 		if (end_of_line((*current)->content))
 			break ;
@@ -92,7 +92,10 @@ int	get_content(int fd, t_list *begin, t_list **current)
 		*current = (*current)->next;
 	}
 	if (!(begin->content[0]))
+	{
+		free_elements(&begin, (*current)->next);
 		return (0);
+	}
 	return (1);
 }
 
@@ -102,7 +105,7 @@ char	*get_next_line(int fd)
 	t_list			*current;
 	char			*line;
 
-	if (!fd || fd == -1)
+	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
 	if (!begin)
 		begin = ft_lstnew();
