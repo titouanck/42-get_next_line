@@ -6,12 +6,11 @@
 /*   By: tchevrie <tchevrie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/29 14:57:26 by tchevrie          #+#    #+#             */
-/*   Updated: 2022/09/30 16:28:37 by tchevrie         ###   ########.fr       */
+/*   Updated: 2022/09/30 16:32:12 by tchevrie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-#include <stdio.h>
 
 char	*tl_strjoin(t_list *begin)
 {
@@ -103,6 +102,8 @@ char	*get_next_line(int fd)
 	t_list			*current;
 	char			*line;
 
+	if (!fd || fd == -1)
+		return (NULL);
 	if (!begin)
 		begin = ft_lstnew();
 	if (!begin)
