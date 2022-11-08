@@ -6,7 +6,7 @@
 /*   By: tchevrie <tchevrie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/29 14:57:26 by tchevrie          #+#    #+#             */
-/*   Updated: 2022/09/30 16:49:52 by tchevrie         ###   ########.fr       */
+/*   Updated: 2022/11/08 20:36:44 by tchevrie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,8 +59,6 @@ int	clear_element(char *content, t_list **elem)
 {
 	size_t	i;
 
-	if (!content)
-		return (1);
 	i = 0;
 	while (content[i] && content[i] != '\n')
 		i++;
@@ -92,10 +90,7 @@ int	get_content(int fd, t_list *begin, t_list **current)
 		*current = (*current)->next;
 	}
 	if (!(begin->content[0]))
-	{
-		free_elements(&begin, (*current)->next);
 		return (0);
-	}
 	return (1);
 }
 
