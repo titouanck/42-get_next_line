@@ -5,45 +5,35 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: tchevrie <tchevrie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/11/09 10:30:31 by tchevrie          #+#    #+#             */
-/*   Updated: 2022/11/11 15:52:42 by tchevrie         ###   ########.fr       */
+/*   Created: 2022/09/29 12:20:49 by tchevrie          #+#    #+#             */
+/*   Updated: 2022/09/30 16:05:36 by tchevrie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef GET_NEXT_LINE_H
-
 # define GET_NEXT_LINE_H
 
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 100000
+#  define BUFFER_SIZE 42
 # endif
 
 # include <stdlib.h>
-# include <stdio.h>
 # include <unistd.h>
-# include <fcntl.h>
 
-typedef struct s_bufferList
+typedef struct s_list
 {
-	char				*content;
-	struct s_bufferList	*next;	
-}						t_bufferList;
-
-typedef struct s_fdList
-{
-	int					fd;
-	t_bufferList		*begin;
-	struct s_fdList		*next_fd;	
-}					t_fdList;
-
-/* get_next_line_c */
-char			*get_next_line(int fd);
+	char			*content;
+	struct s_list	*next;
+}					t_list;
 
 /* get_next_line_utils.c */
-t_bufferList	*ftlst_new_buffer(void);
-t_fdList		*ftlst_new_fd(int fd);
-int				end_of_line(char *content);
-size_t			count_memory(t_bufferList *current);
-t_fdList		*clean_fd_list(t_fdList *fd_list, t_fdList *current);
+size_t	ft_strlen(char *str);
+t_list	*ft_lstnew(void);
+int		ft_lstsize(t_list *lst);
+void	*ft_memmove(void *dst, const void *src, size_t len);
+void	free_elements(t_list **begin, t_list *current);
+
+/* get_next_line.c */
+char	*get_next_line(int fd);
 
 #endif

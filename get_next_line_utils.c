@@ -5,90 +5,108 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: tchevrie <tchevrie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/09/30 13:51:51 by tchevrie          #+#    #+#             */
-/*   Updated: 2022/09/30 16:27:18 by tchevrie         ###   ########.fr       */
+/*   Created: 2022/11/09 10:30:06 by tchevrie          #+#    #+#             */
+/*   Updated: 2022/11/11 15:52:10 by tchevrie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-size_t	ft_strlen(char *str)
+t_bufferList	*ftlst_new_buffer(void)
 {
-	size_t	i;
+	t_bufferList	*new;
+	int				i;
 
-	i = 0;
-	while (str[i])
-		i++;
-	return (i);
-}
-
-t_list	*ft_lstnew(void)
-{
-	t_list	*new;
-	size_t	i;
-
-	new = malloc(sizeof(t_list));
+	new = malloc(sizeof(t_bufferList));
 	if (!new)
 		return (NULL);
-	new->content = malloc(sizeof(char) * (BUFFER_SIZE + 1));
+	new->content = malloc(BUFFER_SIZE + 1);
+	if (!(new->content))
+	{
+		free(new);
+		return (NULL);
+	}
 	i = 0;
-	while (i <= BUFFER_SIZE)
+	while (i < BUFFER_SIZE + 1)
 	{
 		(new->content)[i] = '\0';
 		i++;
 	}
-	new->next = NULL;
+	new->next = 0;
 	return (new);
 }
 
-int	ft_lstsize(t_list *lst)
+t_fdList	*ftlst_new_fd(int fd)
 {
-	int	size;
+	t_fdList	*new;
 
-	size = 0;
-	while (lst)
+	new = malloc(sizeof(t_fdList));
+	if (!new)
+		return (NULL);
+	new->fd = fd;
+	new->begin = ftlst_new_buffer();
+	if (!(new->begin))
 	{
-		size++;
-		lst = lst->next;
+		free(new);
+		return (NULL);
 	}
-	return (size);
+	new->next_fd = 0;
+	return (new);
 }
 
-void	*ft_memmove(void *dst, const void *src, size_t len)
+int	end_of_line(char *content)
 {
-	long	i;
+	size_t	i;
 
-	if (dst < src)
+	i = 0;
+	while (content[i])
+	{
+		if (content[i] == '\n')
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
+size_t	count_memory(t_bufferList *current)
+{
+	size_t	memory;
+	size_t	i;
+
+	memory = 1;
+	while (current)
 	{
 		i = 0;
-		while ((size_t)i < len)
+		while ((current->content)[i])
 		{
-			*(unsigned char *)(dst + i) = *(unsigned char *)(src + i);
+			memory++;
 			i++;
+			if ((current->content)[i - 1] == '\n')
+				break ;
 		}
-		return (dst);
-	}
-	else
-	{
-		i = len - 1;
-		while (i >= 0)
+		if (i > 0 && (current->content)[i - 1] == '\n')
 		{
-			*(unsigned char *)(dst + i) = *(unsigned char *)(src + i);
-			i--;
+			i++;
+			break ;
 		}
-		return (dst);
+		current = current->next;
 	}
+	return (memory);
 }
 
-void	free_elements(t_list **begin, t_list *current)
+t_fdList	*clean_fd_list(t_fdList *fd_list, t_fdList *current)
 {
-	t_list	*next;
+	t_fdList	*tmp;
 
-	while ((*begin) && (*begin) != current)
+	if (fd_list == current)
+			fd_list = fd_list->next_fd;
+	else
 	{
-		next = (*begin)->next;
-		free((*begin)->content);
-		free(*begin);
-		*begin = next;
+		tmp = fd_list;
+		while (tmp->next_fd && tmp->next_fd != current)
+			tmp = tmp->next_fd;
+		if (tmp->next_fd)
+			tmp->next_fd = tmp->next_fd->next_fd;
 	}
+	return (fd_list);
 }
